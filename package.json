@@ -11,9 +11,14 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.75.5",
+    "connectkit": "^1.9.0",
     "next": "15.3.2",
+    "pino-pretty": "^13.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "viem": "2.x",
+    "wagmi": "^2.15.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

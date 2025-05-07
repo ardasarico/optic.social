@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import { Web3Provider } from '@/components/Web3Provider';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -53,7 +55,9 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.png" />
         <link rel="icon" href="/assets/favicons/favicon.ico" sizes="any" />
       </head>
-      <body className={`antialiased ${interVariable.variable} ${openRunde.variable}`}>{children}</body>
+      <body className={`antialiased ${interVariable.variable} ${openRunde.variable}`}>
+        <Web3Provider>{children}</Web3Provider>
+      </body>
     </html>
   );
 }
