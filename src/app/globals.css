@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --font-inter: var(--font-inter);
+  --font-openrunde: var(--font-openrunde);
+}
+
+body {
+  font-family: 'Inter Variable', sans-serif;
+}
