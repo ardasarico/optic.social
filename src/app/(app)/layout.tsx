@@ -14,6 +14,10 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
     }
   }, [status, router]);
 
+  if (status === 'connecting') {
+    return <div className={'w-screen h-screen flex items-center justify-center bg-neutral-300'}>loading...</div>;
+  }
+
   if (!isConnected) {
     return null;
   }
