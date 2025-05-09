@@ -2,6 +2,19 @@
 # yarn lockfile v1
 
 
+"@0no-co/graphql.web@^1.0.5":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@0no-co/graphql.web/-/graphql.web-1.1.2.tgz#9af8deaf3f236c1c6ee99cc5349051475e5dcc83"
+  integrity sha512-N2NGsU5FLBhT8NZ+3l2YrzZSHITjNXNuDhC4iDiikv0IujaJ0Xc6xIxQZ/Ek3Cb+rgPjnLHYyJm11tInuJn+cw==
+
+"@0no-co/graphqlsp@^1.12.13":
+  version "1.12.16"
+  resolved "https://registry.yarnpkg.com/@0no-co/graphqlsp/-/graphqlsp-1.12.16.tgz#58fe7bad53b3ad9fdf2d5f41ddeb9b418d289a03"
+  integrity sha512-B5pyYVH93Etv7xjT6IfB7QtMBdaaC07yjbhN6v8H7KgFStMkPvi+oWYBTibMFRMY89qwc9H8YixXg8SXDVgYWw==
+  dependencies:
+    "@gql.tada/internal" "^1.0.0"
+    graphql "^15.5.0 || ^16.0.0 || ^17.0.0"
+
 "@adraffy/ens-normalize@^1.10.1":
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.11.0.tgz#42cc67c5baa407ac25059fcd7d405cc5ecdb0c33"
@@ -1048,6 +1061,22 @@
     ethereum-cryptography "^2.0.0"
     micro-ftch "^0.3.1"
 
+"@gql.tada/cli-utils@1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@gql.tada/cli-utils/-/cli-utils-1.6.3.tgz#b893cec74908da4df0602691e2e0b1497fda8cda"
+  integrity sha512-jFFSY8OxYeBxdKi58UzeMXG1tdm4FVjXa8WHIi66Gzu9JWtCE6mqom3a8xkmSw+mVaybFW5EN2WXf1WztJVNyQ==
+  dependencies:
+    "@0no-co/graphqlsp" "^1.12.13"
+    "@gql.tada/internal" "1.0.8"
+    graphql "^15.5.0 || ^16.0.0 || ^17.0.0"
+
+"@gql.tada/internal@1.0.8", "@gql.tada/internal@^1.0.0":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@gql.tada/internal/-/internal-1.0.8.tgz#3ba9fa6534809788bbbe103492f70b8e9d754027"
+  integrity sha512-XYdxJhtHC5WtZfdDqtKjcQ4d7R1s0d1rnlSs3OcBEUbYiPoJJfZU7tWsVXuv047Z6msvmr4ompJ7eLSK5Km57g==
+  dependencies:
+    "@0no-co/graphql.web" "^1.0.5"
+
 "@humanfs/core@^0.19.1":
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/@humanfs/core/-/core-0.19.1.tgz#17c55ca7d426733fe3c561906b8173c336b40a77"
@@ -1225,6 +1254,69 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
+
+"@lens-chain/sdk@canary":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lens-chain/sdk/-/sdk-1.0.3.tgz#785c8cb4372bd40b1a3d5efb89c0d0735c0317e8"
+  integrity sha512-ysfCKyhC2CouFQbysnduwKGQU8L6MI1VVBcClMLisKAJAunHFowsBaUp+j8nuQyWmUETpokqpe2Mk0P9bSGhfw==
+
+"@lens-protocol/client@0.0.0-canary-20250507164041", "@lens-protocol/client@canary":
+  version "0.0.0-canary-20250507164041"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-0.0.0-canary-20250507164041.tgz#39fe0fa3abc741377288ed2910d9a30f6cf147c1"
+  integrity sha512-18hWj2uq0QGN7I4EWLn2Hro3fRD0dq5aT5NSszNvpmV0CckddDqRRnwdqityX6OiyX8Paxgt4oqWVTdwqqaFpw==
+  dependencies:
+    "@lens-protocol/env" "0.0.0-canary-20250507164041"
+    "@lens-protocol/graphql" "0.0.0-canary-20250507164041"
+    "@lens-protocol/storage" "0.0.0-canary-20250507164041"
+    "@lens-protocol/types" "0.0.0-canary-20250507164041"
+    "@urql/core" "^5.0.8"
+    "@urql/exchange-auth" "^2.2.0"
+    graphql "^16.9.0"
+    jwt-decode "^4.0.0"
+
+"@lens-protocol/env@0.0.0-canary-20250507164041":
+  version "0.0.0-canary-20250507164041"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/env/-/env-0.0.0-canary-20250507164041.tgz#56de4ca38a22c3a9c375274b406194675149d890"
+  integrity sha512-X30lJ/19S1a9lPsi7mwwpevR+lta6hQcXPN1VurRH9UGzQMNJPd88fRMgMtZI9nHnJ9Se5M+BXVZAr8X7Aa1gw==
+  dependencies:
+    "@lens-protocol/types" "0.0.0-canary-20250507164041"
+
+"@lens-protocol/graphql@0.0.0-canary-20250507164041":
+  version "0.0.0-canary-20250507164041"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/graphql/-/graphql-0.0.0-canary-20250507164041.tgz#8280bd74cf8e2c0b088094dfe7d28b5ca2d6235c"
+  integrity sha512-QjokMs8+ftvwST7XIg5GyiPpARWanZOwr38WUNfszBZK3UfSPg1vZsRDdpDvKThfclwNdzoecBOpCTMsuvii+A==
+  dependencies:
+    "@lens-protocol/types" "0.0.0-canary-20250507164041"
+    gql.tada "^1.8.10"
+    graphql "^16.9.0"
+    type-fest "^4.26.1"
+
+"@lens-protocol/react@canary":
+  version "0.0.0-canary-20250507164041"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/react/-/react-0.0.0-canary-20250507164041.tgz#f26f780737967983d29bc5fffcbf24533728372f"
+  integrity sha512-ePj4iScGo88dPLSL7wMPxoipgDDPhzD6+czNBTingPlpoWSRaaDpYyb1UwcffYP9OMhkBbpFmje2q6KeQQ6rJg==
+  dependencies:
+    "@lens-protocol/client" "0.0.0-canary-20250507164041"
+    "@lens-protocol/env" "0.0.0-canary-20250507164041"
+    "@lens-protocol/graphql" "0.0.0-canary-20250507164041"
+    "@lens-protocol/types" "0.0.0-canary-20250507164041"
+    urql "^4.2.1"
+
+"@lens-protocol/storage@0.0.0-canary-20250507164041":
+  version "0.0.0-canary-20250507164041"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.0.0-canary-20250507164041.tgz#614552091bfcdd61914b3c665baaeac63a8a1f27"
+  integrity sha512-jo5gURLHPb+3F7kkp1Htv8l3JIU0FUQyI9dR4reFErI/oXXNiVdtLDdgDmWL/qA7p93R47/L6ahXrCPG5oG3oA==
+  dependencies:
+    "@lens-protocol/types" "0.0.0-canary-20250507164041"
+    zod "^3.23.8"
+
+"@lens-protocol/types@0.0.0-canary-20250507164041":
+  version "0.0.0-canary-20250507164041"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/types/-/types-0.0.0-canary-20250507164041.tgz#cddd7cb2cad597e0f487456060123a0ff1b28e0e"
+  integrity sha512-Pjo2/+OtcKxFXooiogvy06BhiCW/Em2kvgm4oW5dKJykdhVuIjKHQ6U6eGyyqcFNxq1RMleZ4tPe+cNyo355Mg==
+  dependencies:
+    neverthrow "^8.0.0"
+    type-fest "^4.26.1"
 
 "@lit-labs/ssr-dom-shim@^1.2.0":
   version "1.3.0"
@@ -1742,6 +1834,11 @@
     bs58 "6.0.0"
     valtio "1.13.2"
     viem ">=2.23.11"
+
+"@rollup/rollup-linux-x64-gnu@^4.24.0":
+  version "4.40.2"
+  resolved "https://registry.yarnpkg.com/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.40.2.tgz#90993269b8b995b4067b7b9d72ff1c360ef90a17"
+  integrity sha512-lG7Xa+BmBNwpjmVUbmyKxdQJ3Q6whHjMjzQplOs5Z+Gj7mxPtWakGHqzMqNER68G67kmCX9qX57aRsW5V0VOng==
 
 "@rtsao/scc@^1.1.0":
   version "1.1.0"
@@ -2306,6 +2403,22 @@
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.7.2.tgz#7fd81d89e34a711d398ca87f6d5842735d49721e"
   integrity sha512-friS8NEQfHaDbkThxopGk+LuE5v3iY0StruifjQEt7SLbA46OnfgMO15sOTkbpJkol6RB+1l1TYPXh0sCddpvA==
+
+"@urql/core@^5.0.8", "@urql/core@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-5.1.1.tgz#d83c405451806a5936dabbd3f10a22967199e2f5"
+  integrity sha512-aGh024z5v2oINGD/In6rAtVKTm4VmQ2TxKQBAtk2ZSME5dunZFcjltw4p5ENQg+5CBhZ3FHMzl0Oa+rwqiWqlg==
+  dependencies:
+    "@0no-co/graphql.web" "^1.0.5"
+    wonka "^6.3.2"
+
+"@urql/exchange-auth@^2.2.0":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@urql/exchange-auth/-/exchange-auth-2.2.1.tgz#2e6f7b4ff008f0a3f6e5a1c80f0659d1d0856321"
+  integrity sha512-n4xUxxjvY36GJh539sLaPFyvFzreADOv8EFQdTiXOCIRVoXXhWVVI7DjY/HNtLICfbg1+UlbvQ7sNkwaBouDHg==
+  dependencies:
+    "@urql/core" "^5.1.1"
+    wonka "^6.3.2"
 
 "@wagmi/connectors@5.8.1":
   version "5.8.1"
@@ -3199,6 +3312,18 @@ cookie@^0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.7.2.tgz#556369c472a2ba910f2979891b526b3436237ed7"
   integrity sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==
+
+cookie@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.0.2.tgz#27360701532116bd3f1f9416929d176afe1e4610"
+  integrity sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==
+
+cookies-next@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/cookies-next/-/cookies-next-5.1.0.tgz#b6e1c7d11a4e1d38ed0586a7847cd0f403c539e1"
+  integrity sha512-9Ekne+q8hfziJtnT9c1yDUBqT0eDMGgPrfPl4bpR3xwQHLTd/8gbSf6+IEkP/pjGsDZt1TGbC6emYmFYRbIXwQ==
+  dependencies:
+    cookie "^1.0.1"
 
 core-js-compat@^3.40.0:
   version "3.42.0"
@@ -4393,6 +4518,16 @@ gopd@^1.0.1, gopd@^1.2.0:
   resolved "https://registry.yarnpkg.com/gopd/-/gopd-1.2.0.tgz#89f56b8217bdbc8802bd299df6d7f1081d7e51a1"
   integrity sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==
 
+gql.tada@^1.8.10:
+  version "1.8.10"
+  resolved "https://registry.yarnpkg.com/gql.tada/-/gql.tada-1.8.10.tgz#096a1b30d3c6fc74212fe07d507f01a4095f7f67"
+  integrity sha512-FrvSxgz838FYVPgZHGOSgbpOjhR+yq44rCzww3oOPJYi0OvBJjAgCiP6LEokZIYND2fUTXzQAyLgcvgw1yNP5A==
+  dependencies:
+    "@0no-co/graphql.web" "^1.0.5"
+    "@0no-co/graphqlsp" "^1.12.13"
+    "@gql.tada/cli-utils" "1.6.3"
+    "@gql.tada/internal" "1.0.8"
+
 graceful-fs@^4.2.4:
   version "4.2.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
@@ -4402,6 +4537,11 @@ graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
+
+"graphql@^15.5.0 || ^16.0.0 || ^17.0.0", graphql@^16.9.0:
+  version "16.11.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.11.0.tgz#96d17f66370678027fdf59b2d4c20b4efaa8a633"
+  integrity sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==
 
 h3@^1.15.2:
   version "1.15.3"
@@ -4889,6 +5029,11 @@ json5@^2.2.3:
     object.assign "^4.1.4"
     object.values "^1.1.6"
 
+jwt-decode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-4.0.0.tgz#2270352425fd413785b2faf11f6e755c5151bd4b"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
+
 keccak@^3.0.3:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.4.tgz#edc09b89e633c0549da444432ecf062ffadee86d"
@@ -5191,6 +5336,13 @@ negotiator@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-1.0.0.tgz#b6c91bb47172d69f93cfd7c357bbb529019b5f6a"
   integrity sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==
+
+neverthrow@^8.0.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-8.2.0.tgz#925d988295758534d01fb7468f998680b62064f2"
+  integrity sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==
+  optionalDependencies:
+    "@rollup/rollup-linux-x64-gnu" "^4.24.0"
 
 next@15.3.2:
   version "15.3.2"
@@ -6067,6 +6219,11 @@ serve-static@^2.2.0:
     parseurl "^1.3.3"
     send "^1.2.0"
 
+server-only@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/server-only/-/server-only-0.0.1.tgz#0f366bb6afb618c37c9255a314535dc412cd1c9e"
+  integrity sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==
+
 set-blocking@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
@@ -6553,6 +6710,11 @@ type-check@^0.4.0, type-check@~0.4.0:
   dependencies:
     prelude-ls "^1.2.1"
 
+type-fest@^4.26.1:
+  version "4.41.0"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.41.0.tgz#6ae1c8e5731273c2bf1f58ad39cbae2c91a46c58"
+  integrity sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==
+
 type-is@^2.0.0, type-is@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/type-is/-/type-is-2.0.1.tgz#64f6cf03f92fce4015c2b224793f6bdd4b068c97"
@@ -6732,6 +6894,14 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+urql@^4.2.1:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/urql/-/urql-4.2.2.tgz#e0852fe3bea377edaa616e6175dd39be2d4bf1da"
+  integrity sha512-3GgqNa6iF7bC4hY/ImJKN4REQILcSU9VKcKL8gfELZM8mM5BnLH1BsCc8kBdnVGD1LIFOs4W3O2idNHhON1r0w==
+  dependencies:
+    "@urql/core" "^5.1.1"
+    wonka "^6.3.2"
 
 use-sync-external-store@1.2.0:
   version "1.2.0"
@@ -6914,6 +7084,11 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+wonka@^6.3.2:
+  version "6.3.5"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.5.tgz#33fa54ea700ff3e87b56fe32202112a9e8fea1a2"
+  integrity sha512-SSil+ecw6B4/Dm7Pf2sAshKQ5hWFvfyGlfPbEd6A14dOH6VDjrmbY86u6nZvy9omGwwIPFR8V41+of1EezgoUw==
 
 word-wrap@^1.2.5:
   version "1.2.5"

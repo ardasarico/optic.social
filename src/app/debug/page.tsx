@@ -10,7 +10,7 @@ const Page = () => {
 
   return (
     <div className={'w-full flex-col h-screen flex items-center justify-center gap-3'}>
-      login page
+      DEBUG PAGE DEV ONLY
       <ConnectKitButton />
       <div className={'flex flex-col gap-1'}>
         <Avatar />

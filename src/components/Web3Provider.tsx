@@ -4,6 +4,8 @@ import { WagmiProvider, createConfig, http } from 'wagmi';
 import { lens, lensTestnet } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
+import { LensProvider } from '@lens-protocol/react';
+import { getPublicClient } from '@/lib/lens/client';
 
 const config = createConfig(
   getDefaultConfig({
@@ -21,13 +23,16 @@ const config = createConfig(
 );
 
 const queryClient = new QueryClient();
+const publicClient = getPublicClient();
 
 // @ts-ignore
 export const Web3Provider = ({ children }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>{children}</ConnectKitProvider>
+        <ConnectKitProvider>
+          <LensProvider client={publicClient}>{children}</LensProvider>
+        </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
