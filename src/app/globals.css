@@ -5,6 +5,24 @@
   --font-openrunde: var(--font-openrunde);
 }
 
+@theme {
+  --color-*: initial;
+
+  --color-neutral-900: #000000;
+  --color-neutral-800: #2c2d30;
+  --color-neutral-700: #64676b;
+  --color-neutral-600: #94999e;
+  --color-neutral-500: #b3b8bd;
+  --color-neutral-400: #cdd0d4;
+  --color-neutral-300: #eceef0;
+  --color-neutral-200: #f8f9fa;
+  --color-neutral-100: #ffffff;
+
+  --color-blue: #00c8ff;
+  --color-purple: #d946ef;
+  --color-green: #34c957;
+}
+
 body {
   font-family: 'Inter Variable', sans-serif;
 }
