@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useStep } from '../StepContext';
 import { useDisconnect, useAccount, useWalletClient } from 'wagmi';
-import { useAccountsAvailable, useLogin } from '@lens-protocol/react';
+import { useAccountsAvailable, useLogin, useSessionClient } from '@lens-protocol/react';
 import IconAt from '@icon/at.svg';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -13,9 +13,6 @@ const resolveImage = (picture: any): string => {
 
   const uri = picture?.optimized?.uri || picture?.original?.uri || picture?.uri || picture?.original?.url || '';
   if (!uri) return '/media/placeholders/profile.png';
-  if (uri.startsWith('ipfs://')) {
-    return `https://ipfs.io/ipfs/${uri.replace('ipfs://', '')}`;
-  }
 
   return uri;
 };
@@ -25,66 +22,106 @@ const Select = () => {
   const { disconnect } = useDisconnect();
   const { address: walletAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { data: availableAccounts, loading: accountsLoading } = useAccountsAvailable({
+  const {
+    data: availableAccounts,
+    loading: accountsLoading,
+    error: accountsError,
+  } = useAccountsAvailable({
     managedBy: walletClient?.account.address ?? '',
   });
-  const { execute: authenticate, loading: authenticating } = useLogin();
+  const { execute: authenticate, loading: authenticating, error: authError } = useLogin();
+  const { data: session, loading: sessionLoading } = useSessionClient();
+  const [authenticatingAccount, setAuthenticatingAccount] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('Session data:', session);
+    console.log('Authentication error:', authError);
+    console.log('Accounts error:', accountsError);
+
     if (!process.env.NEXT_PUBLIC_APP_ADDRESS) {
-      console.warn('Environment variable NEXT_PUBLIC_APP_ADDRESS is missing.');
+      console.error('NEXT_PUBLIC_APP_ADDRESS environment variable is missing');
+      setError('Application address configuration is missing');
     }
-  }, []);
+  }, [session, authError, accountsError]);
+
+  useEffect(() => {
+    if (session && authenticatingAccount) {
+      console.log('Successfully authenticated with Lens');
+      next();
+    }
+  }, [session, authenticatingAccount, next]);
 
   const handleSelect = async (accountWrapper: any) => {
-    if (!walletClient || !walletAddress) return;
+    setError(null);
+
+    if (!walletClient || !walletAddress) {
+      setError('Wallet connection is missing');
+      return;
+    }
 
     const account = accountWrapper.account;
+    setAuthenticatingAccount(account.address);
 
     try {
-      const isOwner = walletAddress === account.owner;
+      console.log('Starting authentication for account:', account.address);
+      console.log('Wallet address:', walletAddress);
+      console.log('Account owner:', account.owner);
+
+      const isOwner = walletAddress.toLowerCase() === account.owner?.toLowerCase();
+      console.log('Is owner?', isOwner);
+
+      const appAddress = process.env.NEXT_PUBLIC_APP_ADDRESS;
+      if (!appAddress) {
+        throw new Error('App address is not defined');
+      }
 
       const authRequest = isOwner
         ? {
             accountOwner: {
               account: account.address,
-              app: process.env.NEXT_PUBLIC_APP_ADDRESS!,
+              app: appAddress,
               owner: walletClient.account.address,
             },
           }
         : {
             accountManager: {
               account: account.address,
-              app: process.env.NEXT_PUBLIC_APP_ADDRESS!,
+              app: appAddress,
               manager: walletClient.account.address,
             },
           };
 
-      let signature: string | null = null;
+      console.log('Auth request:', authRequest);
 
-      try {
-        signature = await walletClient.signMessage({
-          message: isOwner ? `Sign in as owner of ${account.address}` : `Sign in as manager of ${account.address}`,
-        });
-        if (!signature) {
-          console.error('Signature is empty or null');
-          return;
-        }
-      } catch {
-        console.error('Signature rejected');
-        return;
-      }
-
-      await authenticate({
+      const result = await authenticate({
         ...authRequest,
-        signMessage: async () => signature!,
+        signMessage: async (message: string) => {
+          console.log('Signing message:', message);
+          return await walletClient.signMessage({ message });
+        },
       });
 
-      next();
+      console.log('Authentication result:', result);
+
+      if (session) {
+        console.log('Session after authentication:', session);
+        next();
+      } else {
+        console.log('No session after authentication, waiting for session update');
+      }
     } catch (err) {
-      console.error('Authentication error:', err);
+      console.error('Authentication error details:', err);
+      setError(err instanceof Error ? err.message : 'Authentication failed');
+      setAuthenticatingAccount(null);
     }
   };
+
+  useEffect(() => {
+    if (authError) {
+      setError(`Authentication error: ${authError.message || authError}`);
+    }
+  }, [authError]);
 
   return (
     <>
@@ -98,6 +135,12 @@ const Select = () => {
         <p className="text-[24px] font-semibold leading-[32px] text-neutral-800 font-openrunde">Choose your account</p>
         <p className="text-neutral-600 leading-[24px] max-w-[384px] text-center">Choose Lens account you want to sign in to.</p>
       </div>
+
+      {error && (
+        <div className="mx-6 p-3 my-2 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
 
       <div className="flex flex-col w-full px-6 gap-2 mt-4">
         {accountsLoading && (
@@ -120,6 +163,7 @@ const Select = () => {
               const acc = accWrapper.account;
               const handle = acc.username?.localName || acc.handle || acc.metadata?.localName || acc.address.slice(0, 6) + '...';
               const image = resolveImage(acc.metadata?.picture);
+              const isAuthenticating = authenticatingAccount === acc.address;
 
               return (
                 <motion.button
@@ -129,11 +173,11 @@ const Select = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                   onClick={() => handleSelect(accWrapper)}
-                  disabled={authenticating}
+                  disabled={authenticating || isAuthenticating}
                   className={`flex items-center gap-4 p-3 rounded-[24px] w-full cursor-pointer
                     transition-all duration-200
-                    bg-neutral-200 hover:bg-neutral-300
-                    ${authenticating ? 'opacity-50 cursor-not-allowed hover:bg-neutral-200' : ''}
+                    ${isAuthenticating ? 'bg-blue-100' : 'bg-neutral-200 hover:bg-neutral-300'}
+                    ${authenticating || isAuthenticating ? 'opacity-70 cursor-not-allowed' : ''}
                   `}>
                   <div className="h-[56px] aspect-square overflow-hidden flex-none bg-neutral-300 rounded-[12px]">
                     <img src={image} className="w-full h-full object-cover" alt={`${handle}'s profile picture`} />
@@ -143,7 +187,7 @@ const Select = () => {
                       <span className="text-neutral-500">@</span>
                       {handle}
                     </p>
-                    <p className="text-neutral-600 leading-[24px] line-clamp-1 overflow-hidden w-full text-start">{acc.metadata?.bio || 'Lens Profile'}</p>
+                    <p className="text-neutral-600 leading-[24px] line-clamp-1 overflow-hidden w-full text-start">{isAuthenticating ? 'Authenticating...' : acc.metadata?.bio || 'Lens Profile'}</p>
                   </div>
                 </motion.button>
               );
