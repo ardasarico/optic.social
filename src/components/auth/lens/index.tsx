@@ -29,10 +29,10 @@ function StepsRenderer() {
   const StepComponent = steps[stepIndex];
 
   return (
-    <div className="relative w-full h-screen flex flex-col items-center justify-center">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center">
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
-          className={'w-[384px] overflow-visible h-fit flex flex-col items-center justify-center gap-6'}
+          className={'flex h-fit w-[384px] flex-col items-center justify-center gap-6 overflow-visible'}
           key={stepIndex}
           custom={direction}
           variants={variants}
@@ -43,10 +43,10 @@ function StepsRenderer() {
           <StepComponent />
         </motion.div>
       </AnimatePresence>
-      <div className={'absolute bottom-[24px] text-neutral-600 text-[13px] leading-[16px] flex items-center gap-2'}>
+      <div className={'absolute bottom-6 flex items-center gap-2 text-[13px] leading-[16px] text-neutral-600'}>
         <p>© 2025 Optic</p>
-        <span className={'text-neutral-400'}>·</span>
-        <Link href="https://github.com/ardasarico/optic.social" className={'hover:text-neutral-700'} target={'_blank'}>
+        <p className={'font-bold text-neutral-500'}>·</p>
+        <Link href="https://github.com/" target={'_blank'} className={'transition duration-200 ease-out hover:text-neutral-800'}>
           GitHub
         </Link>
       </div>
@@ -54,7 +54,7 @@ function StepsRenderer() {
   );
 }
 
-export default function StepsContainer() {
+export default function Login() {
   return (
     <StepProvider>
       <StepsRenderer />

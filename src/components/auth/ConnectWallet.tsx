@@ -10,28 +10,31 @@ import { ConnectKitButton } from 'connectkit';
 
 const ConnectWallet = () => {
   return (
-    <div className={'w-screen h-screen relative flex items-center justify-center p-8 min-h-fit flex-col'}>
+    <div className={'relative flex h-screen min-h-fit w-screen flex-col items-center justify-center p-8'}>
       <Image src="/logo.svg" width={96} height={96} alt={'Logo'} />
-      <p className={'text-[24px] font-semibold leading-[32px] text-[#2C2D30] mt-5 font-openrunde'}>Welcome to Optic</p>
-      <p className={'text-[#2C2D30]/60 leading-[24px] max-w-[384px] text-center mt-2'}>Discover, subscribe and support your favorite creators, all in one beautiful, decentralized place.</p>
+      <p className={'font-openrunde mt-5 text-[24px] leading-[32px] font-semibold tracking-[-0.48px] text-neutral-800'}>Welcome to Optic</p>
+      <p className={'mt-2 max-w-[384px] text-center leading-[24px] text-neutral-600'}>Discover, subscribe and support your favorite creators, all in one beautiful, decentralized place.</p>
 
       <ConnectKitButton.Custom>
         {({ show, isConnecting, isConnected }) => {
           return (
-            <Button onClick={show} disabled={isConnected && isConnecting} size={'large'} fill className={'max-w-[320px] mt-12'}>
-              <IconFamily />
+            <Button onClick={show} disabled={isConnected && isConnecting} size={'large'} fill className={'mt-[48px] max-w-[320px] bg-neutral-800'}>
+              <div className={'p-0.5 text-[20px]'}>
+                <IconFamily />
+              </div>
               Continue with Family
             </Button>
           );
         }}
       </ConnectKitButton.Custom>
-      <button className={'text-[14px] leading-[20px] cursor-pointer mt-4 font-medium text-[#2C2D30]/60 hover:text-[#2C2D30] transition ease-out duration-200'}>
-        <span className={'text-[#2C2D30]/40'}>or</span> use another wallet
+      <button className={'mt-5 cursor-pointer text-[14px] leading-[20px] font-medium text-neutral-600 transition duration-200 ease-out hover:text-[#2C2D30]'}>
+        <span className={'text-neutral-500'}>or</span> use another wallet
       </button>
-      <div className={'absolute bottom-6 flex items-center gap-2 text-[#2C2D30]'}>
-        <p className={'opacity-60'}>© 2025 Optic</p>
-        <p className={'opacity-60'}>·</p>
-        <Link href="https://github.com/" target={'_blank'} className={'opacity-60 hover:opacity-100 transition ease-out duration-200'}>
+
+      <div className={'absolute bottom-6 flex items-center gap-2 text-[13px] leading-[16px] text-neutral-600'}>
+        <p>© 2025 Optic</p>
+        <p className={'font-bold text-neutral-500'}>·</p>
+        <Link href="https://github.com/" target={'_blank'} className={'transition duration-200 ease-out hover:text-neutral-700'}>
           GitHub
         </Link>
       </div>

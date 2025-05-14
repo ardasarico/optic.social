@@ -5,6 +5,7 @@ interface StepContextProps {
   direction: 'forward' | 'backward';
   next: () => void;
   prev: () => void;
+  setStepIndex: (index: number) => void;
 }
 
 const StepContext = createContext<StepContextProps | null>(null);
@@ -25,7 +26,19 @@ export const StepProvider = ({ children }: { children: React.ReactNode }) => {
     setStepIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
-  return <StepContext.Provider value={{ stepIndex, direction, next, prev }}>{children}</StepContext.Provider>;
+  const goToStep = useCallback(
+    (index: number) => {
+      if (index < stepIndex) {
+        setDirection('backward');
+      } else if (index > stepIndex) {
+        setDirection('forward');
+      }
+      setStepIndex(Math.max(0, Math.min(index, totalSteps - 1)));
+    },
+    [stepIndex, totalSteps]
+  );
+
+  return <StepContext.Provider value={{ stepIndex, direction, next, prev, setStepIndex: goToStep }}>{children}</StepContext.Provider>;
 };
 
 export const useStep = () => {

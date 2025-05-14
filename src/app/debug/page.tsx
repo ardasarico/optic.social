@@ -43,7 +43,7 @@ const Page: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full flex-col h-screen flex items-center justify-center gap-3">
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-3">
       <h1>DEBUG PAGE DEV ONLY</h1>
       <ConnectKitButton />
       <div className="flex flex-col gap-1">
@@ -54,8 +54,8 @@ const Page: React.FC = () => {
       </div>
       <Link href="/">Go to app</Link>
       {account ? (
-        <div className="p-4 space-y-2">
-          {account.metadata?.picture && <img src={account.metadata.picture} alt="Profile" className="w-20 h-20 rounded-full" />}
+        <div className="space-y-2 p-4">
+          {account.metadata?.picture && <img src={account.metadata.picture} alt="Profile" className="h-20 w-20 rounded-full" />}
           <h2 className="text-xl font-bold">{account.metadata?.name || 'No Name'}</h2>
           <p>{account.metadata?.id ?? 'No id'}</p>
           <p>{account.metadata?.bio || 'No bio provided.'}</p>
@@ -65,8 +65,8 @@ const Page: React.FC = () => {
         <p>Loading account...</p>
       )}
       <div className="p-4">
-        <h2 className="text-xl mb-4">Debug Controls</h2>
-        <button onClick={handleClearCookies} className="px-4 py-2 bg-red-500 text-white rounded">
+        <h2 className="mb-4 text-xl">Debug Controls</h2>
+        <button onClick={handleClearCookies} className="rounded bg-red-500 px-4 py-2 text-white">
           Clear All Cookies
         </button>
         {cleared && <p className="mt-2 text-green-600">All cookies cleared!</p>}

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@lens-chain/sdk": "canary",
+    "@lens-chain/storage-client": "^1.0.4",
     "@lens-protocol/client": "canary",
     "@lens-protocol/metadata": "^2.0.0",
     "@lens-protocol/react": "canary",

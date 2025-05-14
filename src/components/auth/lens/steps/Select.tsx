@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useStep } from '../StepContext';
 import { useDisconnect, useAccount, useWalletClient } from 'wagmi';
 import { useAccountsAvailable, useLogin, useSessionClient } from '@lens-protocol/react';
 import IconAt from '@icon/at.svg';
 import { motion, AnimatePresence } from 'framer-motion';
+import { deleteCookie, getCookies } from 'cookies-next';
+import { getLensClient } from '@/lib/lens/client';
 
 const resolveImage = (picture: any): string => {
   if (!picture) return '/media/placeholders/profile.png';
@@ -18,7 +20,7 @@ const resolveImage = (picture: any): string => {
 };
 
 const Select = () => {
-  const { next } = useStep();
+  const { next, setStepIndex } = useStep();
   const { disconnect } = useDisconnect();
   const { address: walletAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -33,27 +35,52 @@ const Select = () => {
   const { data: session, loading: sessionLoading } = useSessionClient();
   const [authenticatingAccount, setAuthenticatingAccount] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const hasCleanedSession = useRef(false);
+  const manuallyAuthenticated = useRef(false);
 
   useEffect(() => {
-    console.log('Session data:', session);
-    console.log('Authentication error:', authError);
-    console.log('Accounts error:', accountsError);
+    const cleanupOldSessions = async () => {
+      const sessionCleaned = sessionStorage.getItem('lens_session_cleaned');
+      if (sessionCleaned === 'false') {
+        hasCleanedSession.current = false;
+        sessionStorage.removeItem('lens_session_cleaned');
+      }
 
-    if (!process.env.NEXT_PUBLIC_APP_ADDRESS) {
-      console.error('NEXT_PUBLIC_APP_ADDRESS environment variable is missing');
-      setError('Application address configuration is missing');
-    }
-  }, [session, authError, accountsError]);
+      if (hasCleanedSession.current) return;
+
+      try {
+        const client = await getLensClient();
+
+        if (client.isSessionClient()) {
+          await client.logout();
+
+          const cookies = getCookies();
+          for (const cookieName in cookies) {
+            if (cookieName.toLowerCase().includes('lens')) {
+              deleteCookie(cookieName);
+            }
+          }
+
+          hasCleanedSession.current = true;
+        }
+      } catch (error) {}
+    };
+
+    cleanupOldSessions();
+  }, []);
 
   useEffect(() => {
-    if (session && authenticatingAccount) {
-      console.log('Successfully authenticated with Lens');
+    if (sessionLoading) return;
+
+    if (session && authenticatingAccount && manuallyAuthenticated.current) {
+      setAuthenticatingAccount(null);
       next();
     }
-  }, [session, authenticatingAccount, next]);
+  }, [session, sessionLoading, authenticatingAccount, next]);
 
   const handleSelect = async (accountWrapper: any) => {
     setError(null);
+    manuallyAuthenticated.current = false;
 
     if (!walletClient || !walletAddress) {
       setError('Wallet connection is missing');
@@ -64,12 +91,7 @@ const Select = () => {
     setAuthenticatingAccount(account.address);
 
     try {
-      console.log('Starting authentication for account:', account.address);
-      console.log('Wallet address:', walletAddress);
-      console.log('Account owner:', account.owner);
-
       const isOwner = walletAddress.toLowerCase() === account.owner?.toLowerCase();
-      console.log('Is owner?', isOwner);
 
       const appAddress = process.env.NEXT_PUBLIC_APP_ADDRESS;
       if (!appAddress) {
@@ -92,110 +114,110 @@ const Select = () => {
             },
           };
 
-      console.log('Auth request:', authRequest);
-
       const result = await authenticate({
         ...authRequest,
         signMessage: async (message: string) => {
-          console.log('Signing message:', message);
           return await walletClient.signMessage({ message });
         },
       });
 
-      console.log('Authentication result:', result);
+      manuallyAuthenticated.current = true;
 
-      if (session) {
-        console.log('Session after authentication:', session);
+      if (session && !sessionLoading) {
+        setAuthenticatingAccount(null);
         next();
-      } else {
-        console.log('No session after authentication, waiting for session update');
       }
     } catch (err) {
-      console.error('Authentication error details:', err);
       setError(err instanceof Error ? err.message : 'Authentication failed');
       setAuthenticatingAccount(null);
+      manuallyAuthenticated.current = false;
     }
   };
 
-  useEffect(() => {
-    if (authError) {
-      setError(`Authentication error: ${authError.message || authError}`);
-    }
-  }, [authError]);
+  const handleDisconnect = () => {
+    disconnect();
+  };
 
   return (
     <>
       <div className="flex flex-col">
-        <div className="flex items-center justify-center w-14 aspect-square bg-blue/10 text-blue rounded-full text-[32px]">
+        <div className="bg-blue/10 text-blue flex aspect-square w-14 items-center justify-center rounded-full text-[32px]">
           <IconAt />
         </div>
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-[24px] font-semibold leading-[32px] text-neutral-800 font-openrunde">Choose your account</p>
-        <p className="text-neutral-600 leading-[24px] max-w-[384px] text-center">Choose Lens account you want to sign in to.</p>
+        <p className="font-openrunde text-[24px] leading-[32px] font-semibold tracking-[-0.48px] text-neutral-800">Choose your account</p>
+        <p className="max-w-[384px] text-center leading-[24px] text-neutral-600">Choose Lens account you want to sign in to.</p>
       </div>
 
       {error && (
-        <div className="mx-6 p-3 my-2 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+        <div className="mx-6 my-2 rounded-lg border border-red-300 bg-red-100 p-3 text-red-800">
           <p className="text-sm">{error}</p>
         </div>
       )}
 
-      <div className="flex flex-col w-full px-6 gap-2 mt-4">
-        {accountsLoading && (
-          <>
-            {[1, 2].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-3 rounded-[24px] w-full bg-neutral-200 animate-pulse">
-                <div className="h-[56px] w-[56px] bg-neutral-300 rounded-[12px]" />
-                <div className="flex flex-col gap-2 w-full">
-                  <div className="h-4 w-1/3 bg-neutral-300 rounded" />
-                  <div className="h-3 w-2/3 bg-neutral-200 rounded" />
+      <div className="mt-4 flex w-full flex-col gap-2 px-6">
+        <AnimatePresence mode="wait">
+          {accountsLoading ? (
+            <motion.div key="loading-skeleton" exit={{ opacity: 0, transition: { duration: 0.2 } }} className="flex w-full flex-col gap-2">
+              {[1, 2].map((_, i) => (
+                <div key={i} className="flex w-full animate-pulse items-center gap-4 rounded-[24px] bg-neutral-200 p-3">
+                  <div className="h-[56px] w-[56px] flex-none rounded-[12px] bg-neutral-300" />
+                  <div className="flex w-full flex-col gap-1">
+                    <div className="h-6 w-1/3 rounded bg-neutral-300" />
+                    <div className="h-6 w-2/3 rounded bg-neutral-300" />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </>
-        )}
+              ))}
+            </motion.div>
+          ) : availableAccounts?.items && availableAccounts.items.length > 0 ? (
+            <motion.div key="accounts-list" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.3 } }} className="flex w-full flex-col gap-2">
+              {availableAccounts.items.map((accWrapper: any) => {
+                const acc = accWrapper.account;
+                const handle = acc.username?.localName || acc.handle || acc.metadata?.localName || acc.address.slice(0, 6) + '...';
+                const image = resolveImage(acc.metadata?.picture);
+                const isThisAccountAuthenticating = authenticatingAccount === acc.address;
 
-        <AnimatePresence>
-          {!accountsLoading &&
-            availableAccounts?.items.map((accWrapper: any) => {
-              const acc = accWrapper.account;
-              const handle = acc.username?.localName || acc.handle || acc.metadata?.localName || acc.address.slice(0, 6) + '...';
-              const image = resolveImage(acc.metadata?.picture);
-              const isAuthenticating = authenticatingAccount === acc.address;
-
-              return (
-                <motion.button
-                  key={acc.address}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                  onClick={() => handleSelect(accWrapper)}
-                  disabled={authenticating || isAuthenticating}
-                  className={`flex items-center gap-4 p-3 rounded-[24px] w-full cursor-pointer
-                    transition-all duration-200
-                    ${isAuthenticating ? 'bg-blue-100' : 'bg-neutral-200 hover:bg-neutral-300'}
-                    ${authenticating || isAuthenticating ? 'opacity-70 cursor-not-allowed' : ''}
-                  `}>
-                  <div className="h-[56px] aspect-square overflow-hidden flex-none bg-neutral-300 rounded-[12px]">
-                    <img src={image} className="w-full h-full object-cover" alt={`${handle}'s profile picture`} />
-                  </div>
-                  <div className="flex flex-col items-start gap-1 text-neutral-800">
-                    <p className="text-[18px] leading-[24px] font-medium">
-                      <span className="text-neutral-500">@</span>
-                      {handle}
-                    </p>
-                    <p className="text-neutral-600 leading-[24px] line-clamp-1 overflow-hidden w-full text-start">{isAuthenticating ? 'Authenticating...' : acc.metadata?.bio || 'Lens Profile'}</p>
-                  </div>
-                </motion.button>
-              );
-            })}
+                return (
+                  <motion.button
+                    key={acc.address}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    onClick={() => handleSelect(accWrapper)}
+                    disabled={authenticating || isThisAccountAuthenticating}
+                    className={`flex w-full cursor-pointer items-center gap-4 rounded-[24px] bg-neutral-200 p-3 transition transition-all duration-200 ease-out hover:bg-neutral-300 active:scale-[0.99] ${authenticating || isThisAccountAuthenticating ? 'cursor-not-allowed opacity-70' : ''} `}>
+                    <div className="aspect-square h-[56px] flex-none overflow-hidden rounded-[12px] bg-neutral-300">
+                      <img src={image} className="h-full w-full object-cover" alt={`${handle}'s profile picture`} />
+                    </div>
+                    <div className="flex flex-col items-start gap-1 text-neutral-800">
+                      <p className="h-6 overflow-hidden text-[18px] leading-[24px] font-medium">
+                        <span className="text-neutral-500">@</span>
+                        {handle}
+                      </p>
+                      <p className="line-clamp-1 h-6 w-full overflow-hidden text-start leading-[24px] text-neutral-600">
+                        {isThisAccountAuthenticating ? 'Authenticating...' : acc.metadata?.name || 'Lens Profile'}
+                      </p>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-accounts-message"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { duration: 0.3 } }}
+              className="flex w-full justify-center p-4 text-center text-neutral-500">
+              No Lens accounts found for this wallet.
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
-      <button onClick={() => disconnect()} className="text-neutral-600 cursor-pointer text-[14px] leading-[20px] mt-4">
+      <button onClick={handleDisconnect} className="cursor-pointer text-[14px] leading-[20px] text-neutral-600">
         <span className="text-neutral-500">or</span> change wallet
       </button>
     </>

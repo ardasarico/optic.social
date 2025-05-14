@@ -59,7 +59,7 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
   }, [isConnected, hasMounted]);
 
   if (!hasMounted || status === 'connecting' || loading) {
-    return <div className={'w-screen h-screen flex items-center justify-center bg-neutral-300'}>loading...</div>;
+    return <div className={'flex h-screen w-screen items-center justify-center bg-neutral-300'}>loading...</div>;
   }
 
   if (!isConnected) {

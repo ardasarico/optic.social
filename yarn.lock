@@ -1260,6 +1260,11 @@
   resolved "https://registry.yarnpkg.com/@lens-chain/sdk/-/sdk-1.0.3.tgz#785c8cb4372bd40b1a3d5efb89c0d0735c0317e8"
   integrity sha512-ysfCKyhC2CouFQbysnduwKGQU8L6MI1VVBcClMLisKAJAunHFowsBaUp+j8nuQyWmUETpokqpe2Mk0P9bSGhfw==
 
+"@lens-chain/storage-client@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@lens-chain/storage-client/-/storage-client-1.0.4.tgz#2e8b9dca74565da41c74003a7a25756f346dd0ab"
+  integrity sha512-dORCTVwSWP7MWoJ257oriH7EV8g6YU3Pxgligy28XOglLEO0PBb/D4b6fuSSqWZjvfOjr4KCC4UgqU1z66VckQ==
+
 "@lens-protocol/client@0.0.0-canary-20250507164041", "@lens-protocol/client@canary":
   version "0.0.0-canary-20250507164041"
   resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-0.0.0-canary-20250507164041.tgz#39fe0fa3abc741377288ed2910d9a30f6cf147c1"

@@ -14,15 +14,24 @@
   --color-neutral-600: #94999e;
   --color-neutral-500: #b3b8bd;
   --color-neutral-400: #cdd0d4;
-  --color-neutral-300: #eceef0;
+  --color-neutral-300: #eef0f2;
   --color-neutral-200: #f8f9fa;
   --color-neutral-100: #ffffff;
 
   --color-blue: #00c8ff;
   --color-purple: #d946ef;
   --color-green: #34c957;
+  --color-red: #ee4562;
 }
 
 body {
   font-family: 'Inter Variable', sans-serif;
+}
+
+textarea::-webkit-resizer {
+  display: none;
+}
+
+textarea::-moz-resizer {
+  display: none;
 }
