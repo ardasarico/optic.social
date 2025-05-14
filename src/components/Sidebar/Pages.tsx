@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { getLensClient } from '@/lib/lens/client';
+import { fetchAccount } from '@lens-protocol/client/actions';
 
 import IconHome from '@icon/home.svg';
 import IconHomeFill from '@icon/homeFill.svg';
@@ -10,14 +13,39 @@ import IconExploreFill from '@icon/compassFill.svg';
 import IconProfile from '@icon/person.svg';
 import IconProfileFill from '@icon/personFill.svg';
 
-const navLinks = [
-  { href: '/', label: 'Home', icon: <IconHome />, iconFill: <IconHomeFill /> },
-  { href: '/explore', label: 'Explore', icon: <IconExplore />, iconFill: <IconExploreFill /> },
-  { href: '/profile', label: 'Profile', icon: <IconProfile />, iconFill: <IconProfileFill /> },
-];
-
 const Pages = () => {
   const pathname = usePathname();
+  const [profileHref, setProfileHref] = useState('/profile');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchHandle() {
+      try {
+        const client = await getLensClient();
+        if (!client.isSessionClient()) return;
+        const authenticatedUser = client.getAuthenticatedUser().unwrapOr(null);
+        if (!authenticatedUser) return;
+        const account = await fetchAccount(client, { address: authenticatedUser.address }).unwrapOr(null);
+        const handle = account?.username?.localName;
+        if (handle && mounted) {
+          setProfileHref(`/${handle}`);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    fetchHandle();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const navLinks = [
+    { href: '/', label: 'Home', icon: <IconHome />, iconFill: <IconHomeFill /> },
+    { href: '/explore', label: 'Explore', icon: <IconExplore />, iconFill: <IconExploreFill /> },
+    { href: profileHref, label: 'Profile', icon: <IconProfile />, iconFill: <IconProfileFill /> },
+  ];
 
   return (
     <div className="flex w-full flex-col gap-0.5">

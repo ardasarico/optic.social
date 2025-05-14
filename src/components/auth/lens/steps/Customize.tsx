@@ -15,7 +15,7 @@ import Button from '@/components/ui/Button';
 import { account as accountMetadataBuilder } from '@lens-protocol/metadata';
 import { useWalletClient } from 'wagmi';
 import { StorageClient, lensAccountOnly } from '@lens-chain/storage-client';
-import { deleteCookie, getCookies } from 'cookies-next';
+import StepHeader from '../StepHeader';
 
 const resolveImage = (picture: any): string => {
   if (!picture) return '/media/placeholders/profile.png';
@@ -27,7 +27,7 @@ const resolveImage = (picture: any): string => {
   return uri;
 };
 
-const Select = () => {
+const Customize = () => {
   const { next, prev, setStepIndex } = useStep();
   const [selectedImage, setSelectedImage] = useState<string | File>('');
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
@@ -176,42 +176,21 @@ const Select = () => {
     }
   };
 
-  const handleBack = async () => {
-    try {
-      const client = await getLensClient();
-
-      if (client.isSessionClient()) {
-        await client.logout();
-
-        const cookies = getCookies();
-        for (const cookieName in cookies) {
-          if (cookieName.toLowerCase().includes('lens')) {
-            deleteCookie(cookieName);
-          }
-        }
-      }
-
-      sessionStorage.setItem('lens_session_cleaned', 'false');
-
-      setStepIndex(0);
-    } catch (error) {
-      setStepIndex(0);
-    }
+  const handleSkip = async () => {
+    next();
   };
 
   return (
     <>
-      <div className={'flex flex-col'}>
-        <div className={'bg-blue/10 text-blue flex aspect-square w-14 items-center justify-center rounded-full text-[32px]'}>
-          <IconPencil />
-        </div>
-      </div>
-      <div className={'flex flex-col items-center gap-2'}>
-        <p className={'font-openrunde text-[24px] leading-[32px] font-semibold tracking-[-0.48px] text-neutral-800'}>
-          Customize <span className={'text-neutral-500'}>@</span>eugrl
-        </p>
-        <p className={'max-w-[384px] text-center leading-[24px] text-[#2C2D30]/60'}>Add name, bio and an image to your account.</p>
-      </div>
+      <StepHeader
+        icon={<IconPencil />}
+        title={
+          <>
+            Customize <span className={'text-neutral-500'}>@</span>eugrl
+          </>
+        }
+        description="Add name, bio and an image to your account."
+      />
       <div className={'flex w-full flex-col gap-5 px-6'}>
         <div className={'flex h-[144px] w-full cursor-pointer items-center justify-center rounded-[24px] border-2 border-neutral-300'} onClick={handleContainerClick}>
           <div className={'relative flex aspect-square w-[96px] items-center justify-center rounded-full bg-neutral-400'}>
@@ -235,12 +214,13 @@ const Select = () => {
         <Button size={'large'} onClick={handleUpdateProfile} disabled={submitting || loading}>
           {submitting ? 'Updating...' : 'Continue'}
         </Button>
-        <button onClick={handleBack} disabled={submitting}>
-          back
+
+        <button onClick={handleSkip} className="cursor-pointer text-[14px] leading-[20px] text-neutral-600 hover:text-neutral-700">
+          <span className="text-neutral-500!">Don't want to customize?</span> Skip for now
         </button>
       </div>
     </>
   );
 };
 
-export default Select;
+export default Customize;

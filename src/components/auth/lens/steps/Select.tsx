@@ -8,6 +8,7 @@ import IconAt from '@icon/at.svg';
 import { motion, AnimatePresence } from 'framer-motion';
 import { deleteCookie, getCookies } from 'cookies-next';
 import { getLensClient } from '@/lib/lens/client';
+import StepHeader from '../StepHeader';
 
 const resolveImage = (picture: any): string => {
   if (!picture) return '/media/placeholders/profile.png';
@@ -37,37 +38,6 @@ const Select = () => {
   const [error, setError] = useState<string | null>(null);
   const hasCleanedSession = useRef(false);
   const manuallyAuthenticated = useRef(false);
-
-  useEffect(() => {
-    const cleanupOldSessions = async () => {
-      const sessionCleaned = sessionStorage.getItem('lens_session_cleaned');
-      if (sessionCleaned === 'false') {
-        hasCleanedSession.current = false;
-        sessionStorage.removeItem('lens_session_cleaned');
-      }
-
-      if (hasCleanedSession.current) return;
-
-      try {
-        const client = await getLensClient();
-
-        if (client.isSessionClient()) {
-          await client.logout();
-
-          const cookies = getCookies();
-          for (const cookieName in cookies) {
-            if (cookieName.toLowerCase().includes('lens')) {
-              deleteCookie(cookieName);
-            }
-          }
-
-          hasCleanedSession.current = true;
-        }
-      } catch (error) {}
-    };
-
-    cleanupOldSessions();
-  }, []);
 
   useEffect(() => {
     if (sessionLoading) return;
@@ -140,24 +110,15 @@ const Select = () => {
 
   return (
     <>
-      <div className="flex flex-col">
-        <div className="bg-blue/10 text-blue flex aspect-square w-14 items-center justify-center rounded-full text-[32px]">
-          <IconAt />
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center gap-2">
-        <p className="font-openrunde text-[24px] leading-[32px] font-semibold tracking-[-0.48px] text-neutral-800">Choose your account</p>
-        <p className="max-w-[384px] text-center leading-[24px] text-neutral-600">Choose Lens account you want to sign in to.</p>
-      </div>
+      <StepHeader icon={<IconAt />} title="Choose your account" description="Choose Lens account you want to sign in to." />
 
       {error && (
-        <div className="mx-6 my-2 rounded-lg border border-red-300 bg-red-100 p-3 text-red-800">
+        <div className="text-red mx-6 my-2 rounded-lg border border-red-300 bg-red-100 p-3">
           <p className="text-sm">{error}</p>
         </div>
       )}
 
-      <div className="mt-4 flex w-full flex-col gap-2 px-6">
+      <div className="flex w-full flex-col px-6">
         <AnimatePresence mode="wait">
           {accountsLoading ? (
             <motion.div key="loading-skeleton" exit={{ opacity: 0, transition: { duration: 0.2 } }} className="flex w-full flex-col gap-2">
@@ -188,7 +149,7 @@ const Select = () => {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     onClick={() => handleSelect(accWrapper)}
                     disabled={authenticating || isThisAccountAuthenticating}
-                    className={`flex w-full cursor-pointer items-center gap-4 rounded-[24px] bg-neutral-200 p-3 transition transition-all duration-200 ease-out hover:bg-neutral-300 active:scale-[0.99] ${authenticating || isThisAccountAuthenticating ? 'cursor-not-allowed opacity-70' : ''} `}>
+                    className={`flex w-full cursor-pointer items-center gap-4 rounded-[24px] bg-neutral-200 p-3 transition duration-200 ease-out hover:bg-neutral-300 active:scale-[0.99] ${authenticating || isThisAccountAuthenticating ? 'cursor-not-allowed opacity-70' : ''} `}>
                     <div className="aspect-square h-[56px] flex-none overflow-hidden rounded-[12px] bg-neutral-300">
                       <img src={image} className="h-full w-full object-cover" alt={`${handle}'s profile picture`} />
                     </div>
@@ -210,16 +171,15 @@ const Select = () => {
               key="no-accounts-message"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { duration: 0.3 } }}
-              className="flex w-full justify-center p-4 text-center text-neutral-500">
+              className="flex w-full justify-center py-6 text-center text-neutral-500">
               No Lens accounts found for this wallet.
             </motion.div>
           )}
         </AnimatePresence>
+        <button onClick={handleDisconnect} className="mt-5 cursor-pointer text-[14px] leading-[20px] text-neutral-600 hover:text-neutral-700">
+          <span className="text-neutral-500!">or</span> change wallet
+        </button>
       </div>
-
-      <button onClick={handleDisconnect} className="cursor-pointer text-[14px] leading-[20px] text-neutral-600">
-        <span className="text-neutral-500">or</span> change wallet
-      </button>
     </>
   );
 };
