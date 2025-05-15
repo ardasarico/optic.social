@@ -26,6 +26,8 @@
 
 body {
   font-family: 'Inter Variable', sans-serif;
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-800);
 }
 
 textarea::-webkit-resizer {
@@ -33,5 +35,13 @@ textarea::-webkit-resizer {
 }
 
 textarea::-moz-resizer {
+  display: none;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
