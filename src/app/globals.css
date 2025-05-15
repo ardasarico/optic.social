@@ -28,6 +28,17 @@ body {
   font-family: 'Inter Variable', sans-serif;
   background: var(--color-neutral-100);
   color: var(--color-neutral-800);
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
 }
 
 textarea::-webkit-resizer {

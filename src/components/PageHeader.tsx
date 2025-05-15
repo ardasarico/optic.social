@@ -51,7 +51,7 @@ const PageHeader: React.FC<PageHeaderProps> = () => {
 
   return (
     <div className={'relative flex h-[56px] w-full flex-none items-center justify-center shadow-[0px_-1px_0px_0px_#ECEEF0_inset]'}>
-      {!isStaticPage && (
+      {!isStaticPage && title !== 'Profile' && (
         <button className="absolute left-4 p-0.5 text-neutral-600 transition duration-200 ease-out hover:text-neutral-700 active:scale-[90%]" aria-label="Go back" onClick={() => router.back()}>
           <IconChevronLeft />
         </button>
