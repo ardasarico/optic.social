@@ -3,7 +3,7 @@
 import StepHeader from '../StepHeader';
 import IconPerson from '@icon/person.svg';
 import IconStar from '@icon/star.svg';
-import IconHearth from '@icon/hearth.svg';
+import IconHearth from '@icon/hearthFill.svg';
 import { useRouter } from 'next/navigation';
 
 const Start = () => {

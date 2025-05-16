@@ -6,8 +6,6 @@ import { useDisconnect, useAccount, useWalletClient } from 'wagmi';
 import { useAccountsAvailable, useLogin, useSessionClient } from '@lens-protocol/react';
 import IconAt from '@icon/at.svg';
 import { motion, AnimatePresence } from 'framer-motion';
-import { deleteCookie, getCookies } from 'cookies-next';
-import { getLensClient } from '@/lib/lens/client';
 import StepHeader from '../StepHeader';
 
 const resolveImage = (picture: any): string => {
