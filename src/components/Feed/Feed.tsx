@@ -1,6 +1,6 @@
 'use client';
 
-import Post, { PostProps } from './Post';
+import Post, { PostProps } from './post';
 
 export type PostData = PostProps;
 

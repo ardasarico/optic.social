@@ -1,5 +1,5 @@
 import Feed from '@/components/Feed/Feed';
-import { PostProps } from '@/components/Feed/Post';
+import { PostProps } from 'src/components/Feed/post';
 import CreatePost from '@/components/Feed/CreatePost';
 
 const samplePosts: PostProps[] = [
