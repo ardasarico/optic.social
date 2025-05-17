@@ -6,7 +6,7 @@ import { fetchAccount } from '@lens-protocol/client/actions';
 import type { Account } from '@lens-protocol/client';
 import { evmAddress, uri } from '@lens-protocol/client';
 import { post as lensPost } from '@lens-protocol/client/actions';
-import { textOnly } from '@lens-protocol/metadata';
+import { textOnly, image, MediaImageMimeType, MetadataLicenseType } from '@lens-protocol/metadata';
 import { StorageClient } from '@lens-chain/storage-client';
 
 import IconPhoto from '@icon/photo.svg';
@@ -86,10 +86,53 @@ const CreatePost = () => {
     try {
       const client = await getLensClient();
       if (!client.isSessionClient()) return;
-      // Metadata oluştur
-      const metadata = textOnly({ content });
-      // Metadata'yı Grove'a yükle
       const storageClient = StorageClient.create();
+      // Upload images and files, collect their URIs
+      const imageMetas = [];
+      const fileMetas = [];
+      for (const fileObj of uploadedFiles) {
+        const { file, type } = fileObj;
+        const upload = await storageClient.uploadFile(file);
+        if (type === 'image') {
+          // Detect mime type for image
+          let mimeType: MediaImageMimeType = MediaImageMimeType.PNG;
+          if (file.type === 'image/jpeg') mimeType = MediaImageMimeType.JPEG;
+          else if (file.type === 'image/png') mimeType = MediaImageMimeType.PNG;
+          else if (file.type === 'image/gif') mimeType = MediaImageMimeType.GIF;
+          else if (file.type === 'image/webp') mimeType = MediaImageMimeType.WEBP;
+          else if (file.type === 'image/bmp') mimeType = MediaImageMimeType.BMP;
+          else if (file.type === 'image/svg+xml') mimeType = MediaImageMimeType.SVG_XML;
+          else if (file.type === 'image/tiff') mimeType = MediaImageMimeType.TIFF;
+          else if (file.type === 'image/heic') mimeType = MediaImageMimeType.HEIC;
+          else if (file.type === 'image/x-ms-bmp') mimeType = MediaImageMimeType.X_MS_BMP;
+          imageMetas.push({
+            item: upload.uri,
+            type: mimeType,
+            altTag: file.name,
+            license: MetadataLicenseType.CCO,
+          });
+        } else {
+          // For non-image files, treat as generic attachment (no 'type' field)
+          fileMetas.push({
+            item: upload.uri,
+            altTag: file.name,
+            license: MetadataLicenseType.CCO,
+          });
+        }
+      }
+      // Metadata oluştur
+      let metadata;
+      if (imageMetas.length > 0 || fileMetas.length > 0) {
+        metadata = image({
+          title: content.slice(0, 32),
+          image: imageMetas[0] || undefined,
+          attachments: fileMetas.length > 0 ? (fileMetas as any) : undefined,
+          content,
+        });
+      } else {
+        metadata = textOnly({ content });
+      }
+      // Metadata'yı Grove'a yükle
       const { uri: contentUri } = await storageClient.uploadFile(new File([JSON.stringify(metadata)], 'metadata.json', { type: 'application/json' }));
       // Postu gönder
       const result = await lensPost(client, {
@@ -101,6 +144,8 @@ const CreatePost = () => {
         return;
       }
       setContent('');
+      setUploadedFiles([]);
+      setPreviewUrls([]);
     } catch (err: any) {
       alert(err.message || 'Unknown error');
     }

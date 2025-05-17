@@ -49,6 +49,20 @@ const Feed = () => {
         <div>Loading...</div>
       ) : data && data.length > 0 ? (
         data.map((post: any) => {
+          const meta = post.metadata;
+          const media: { url: string; type: string }[] = [];
+          // Handle main image
+          if (meta?.image && meta?.image.item && meta?.image.type) {
+            media.push({ url: meta.image.item, type: meta.image.type });
+          }
+          // Handle attachments (images, files, etc.)
+          if (Array.isArray(meta?.attachments)) {
+            for (const att of meta.attachments) {
+              if (att.item && att.type) {
+                media.push({ url: att.item, type: att.type });
+              }
+            }
+          }
           const mapped: PostProps = {
             id: post.id,
             author: {
@@ -59,8 +73,8 @@ const Feed = () => {
             },
             timestamp: post.createdAt ? new Date(post.createdAt).toLocaleString() : '',
             metadata: {
-              content: post.metadata?.content || '',
-              media: post.metadata?.media?.map((m: any) => ({ url: m.url, type: m.type })) || undefined,
+              content: meta?.content || '',
+              media: media.length > 0 ? media : undefined,
             },
             stats: {
               comments: post.stats?.comments || 0,

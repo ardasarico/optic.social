@@ -18,13 +18,19 @@ const Content = ({ content, media }: ContentProps) => {
       {media && media.length > 0 && (
         <div className="">
           {media.map((item, index) => {
-            if (item.type.startsWith('image')) {
+            // Accept both 'image/png' and 'PNG' (and similar) as image types
+            const typeLower = item.type.toLowerCase();
+            if (
+              typeLower.startsWith('image') ||
+              ['png', 'jpeg', 'jpg', 'gif', 'webp', 'bmp', 'svg+xml', 'tiff', 'heic', 'x-ms-bmp'].includes(typeLower) ||
+              ['png', 'jpeg', 'jpg', 'gif', 'webp', 'bmp', 'svg_xml', 'tiff', 'heic', 'x_ms_bmp'].includes(typeLower.replace(/\W/g, '_'))
+            ) {
               return (
                 <div key={index} className="relative h-auto w-full overflow-hidden rounded-[16px]">
                   <img src={item.url} alt="Post media" className="h-full min-h-[220px] w-full object-cover" />
                 </div>
               );
-            } else if (item.type.startsWith('video')) {
+            } else if (typeLower.startsWith('video')) {
               return (
                 <div key={index} className="relative h-auto w-full overflow-hidden rounded-[16px]">
                   <video src={item.url} className="h-full min-h-[220px] w-full object-cover" />
