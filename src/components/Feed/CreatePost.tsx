@@ -4,6 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { getLensClient } from '@/lib/lens/client';
 import { fetchAccount } from '@lens-protocol/client/actions';
 import type { Account } from '@lens-protocol/client';
+import { evmAddress, uri } from '@lens-protocol/client';
+import { post as lensPost } from '@lens-protocol/client/actions';
+import { textOnly } from '@lens-protocol/metadata';
+import { StorageClient } from '@lens-chain/storage-client';
 
 import IconPhoto from '@icon/photo.svg';
 import IconAttachment from '@icon/attachment.svg';
@@ -11,6 +15,8 @@ import IconGlobe from '@icon/globe.svg';
 import IconStar from '@icon/star.svg';
 import IconXmark from '@icon/xmark.svg';
 import Button from '../ui/Button';
+
+const FEED_ADDRESS = '0x469CB8F8A424fc9E1781FB2633822102134191d1';
 
 const CreatePost = () => {
   const [content, setContent] = useState('');
@@ -75,7 +81,30 @@ const CreatePost = () => {
     setPreviewUrls((prev) => prev.filter((p) => p.id !== id));
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    if (!content.trim()) return;
+    try {
+      const client = await getLensClient();
+      if (!client.isSessionClient()) return;
+      // Metadata oluştur
+      const metadata = textOnly({ content });
+      // Metadata'yı Grove'a yükle
+      const storageClient = StorageClient.create();
+      const { uri: contentUri } = await storageClient.uploadFile(new File([JSON.stringify(metadata)], 'metadata.json', { type: 'application/json' }));
+      // Postu gönder
+      const result = await lensPost(client, {
+        contentUri: uri(contentUri),
+        feed: evmAddress(FEED_ADDRESS),
+      });
+      if (result.isErr()) {
+        alert(result.error.message || 'Error posting');
+        return;
+      }
+      setContent('');
+    } catch (err: any) {
+      alert(err.message || 'Unknown error');
+    }
+  };
 
   return (
     <div className="flex w-full items-start gap-4 py-6">
@@ -158,7 +187,7 @@ const CreatePost = () => {
               </>
             )}
           </button>
-          <Button size="small" className={`${content ? 'bg-neutral-800' : 'pointer-events-none! cursor-not-allowed! bg-neutral-300'}`}>
+          <Button size="small" className={`${content ? 'bg-neutral-800' : 'pointer-events-none! cursor-not-allowed! bg-neutral-300'}`} onClick={handleSubmit}>
             Post
           </Button>
         </div>

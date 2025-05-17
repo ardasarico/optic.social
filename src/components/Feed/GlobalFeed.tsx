@@ -1,77 +1,79 @@
 'use client';
 
 import Post, { PostProps } from './post';
+import { useEffect, useState } from 'react';
+import { getLensClient } from '@/lib/lens/client';
+import { evmAddress } from '@lens-protocol/client';
+import { fetchPosts } from '@lens-protocol/client/actions';
 
-const posts: PostProps[] = [
-  {
-    id: '0x01',
-    author: {
-      address: '0x123456789abcdef',
-      profileImage: '/media/placeholders/profile.png',
-      name: 'Benji Taylor',
-      handle: '@benjitaylor',
-    },
-    timestamp: '3h',
-    metadata: {
-      content: 'Every personal website is a playground',
-    },
-    stats: {
-      comments: 25,
-      reactions: 952,
-      reposts: 45,
-      quotes: 12,
-    },
-  },
-  {
-    id: '0x02',
-    author: {
-      address: '0x234567890abcdef',
-      profileImage: '/media/placeholders/profile.png',
-      name: 'Alex Vanderzon',
-      handle: '@alex',
-    },
-    timestamp: '1h',
-    metadata: {
-      content: "What's your favourite software and why?",
-    },
-    stats: {
-      comments: 6,
-      reactions: 89,
-      reposts: 3,
-      quotes: 1,
-    },
-  },
-  {
-    id: '0x03',
-    author: {
-      address: '0x3456789abcdef01',
-      profileImage: '/media/placeholders/profile.png',
-      name: 'Lochie',
-      handle: '@lochie',
-    },
-    timestamp: '2d',
-    metadata: {
-      content: 'The amount of people who have adopted ConnectKit for their apps is incredible! Warms my heart whenever I see our work out in the wild.',
-      media: [
-        {
-          url: 'https://picsum.photos/1200/950',
-          type: 'image/jpeg',
-        },
-      ],
-    },
-    stats: {
-      comments: 8,
-      reactions: 72,
-      reposts: 12,
-      quotes: 2,
-    },
-  },
-];
+const FEED_APP_ADDRESS = '0x59d5e65777914d474E26d7416894752c6849516d';
 
 const Feed = () => {
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function fetchData() {
+    setLoading(true);
+    try {
+      const client = await getLensClient();
+      const result = await fetchPosts(client, {
+        filter: {
+          feeds: [
+            {
+              app: evmAddress(FEED_APP_ADDRESS),
+            },
+          ],
+        },
+      });
+      if (result.isErr()) {
+        setError(result.error.message || 'Error fetching posts');
+        setLoading(false);
+        return;
+      }
+      setData(result.value.items);
+    } catch (err: any) {
+      setError(err.message || 'Unknown error');
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-3">
-      {posts && posts.length > 0 ? posts.map((post) => <Post key={post.id} {...post} />) : <div className="p-4 text-center text-neutral-500">No posts to display</div>}
+      {error && <div className="text-red-500">{error}</div>}
+      {loading ? (
+        <div>Loading...</div>
+      ) : data && data.length > 0 ? (
+        data.map((post: any) => {
+          const mapped: PostProps = {
+            id: post.id,
+            author: {
+              address: post.author?.address || '',
+              profileImage: post.author?.metadata?.picture || '/media/placeholders/profile.png',
+              name: post.author?.metadata?.name || '',
+              handle: post.author?.username?.localName ? `@${post.author.username.localName}` : post.author?.address?.slice(0, 8) || '',
+            },
+            timestamp: post.createdAt ? new Date(post.createdAt).toLocaleString() : '',
+            metadata: {
+              content: post.metadata?.content || '',
+              media: post.metadata?.media?.map((m: any) => ({ url: m.url, type: m.type })) || undefined,
+            },
+            stats: {
+              comments: post.stats?.comments || 0,
+              reactions: post.stats?.reactions || 0,
+              reposts: post.stats?.reposts || 0,
+              quotes: post.stats?.quotes || 0,
+            },
+          };
+          return <Post key={mapped.id} {...mapped} />;
+        })
+      ) : (
+        <div className="p-4 text-center text-neutral-500">No posts to display</div>
+      )}
     </div>
   );
 };
