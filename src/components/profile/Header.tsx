@@ -1,3 +1,6 @@
+import Button from '@/components/ui/Button';
+import IconStar from '@icon/star.svg';
+
 interface HeaderProps {
   name: string;
   handle: string;
@@ -26,6 +29,15 @@ const Header = ({ name, handle, bio, profileImage, followerCount, followingCount
         <span>
           <span className="font-semibold text-neutral-800">{followingCount ?? 0} </span> Followers
         </span>
+      </div>
+      <div className="flex w-full items-center gap-2">
+        <Button size="large" fill>
+          Follow
+        </Button>
+        <Button className="bg-purple/10 text-purple" size="large" fill>
+          <IconStar />
+          Subscribe
+        </Button>
       </div>
     </div>
   );

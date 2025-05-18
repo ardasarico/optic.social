@@ -15,6 +15,13 @@ const Feed = () => {
 
   async function fetchData() {
     setLoading(true);
+
+    const cachedData = sessionStorage.getItem('feedData');
+    if (cachedData) {
+      const parsedCache = JSON.parse(cachedData);
+      setData(parsedCache);
+    }
+
     try {
       const client = await getLensClient();
       const result = await fetchPosts(client, {
@@ -31,7 +38,11 @@ const Feed = () => {
         setLoading(false);
         return;
       }
-      setData(result.value.items);
+      const newData = result.value.items;
+      if (JSON.stringify(newData) !== JSON.stringify(data)) {
+        setData(newData);
+        sessionStorage.setItem('feedData', JSON.stringify(newData));
+      }
     } catch (err: any) {
       setError(err.message || 'Unknown error');
     }
@@ -45,17 +56,15 @@ const Feed = () => {
   return (
     <div className="flex w-full flex-col gap-3">
       {error && <div className="text-red-500">{error}</div>}
-      {loading ? (
+      {loading && !data ? (
         <div>Loading...</div>
       ) : data && data.length > 0 ? (
         data.map((post: any) => {
           const meta = post.metadata;
           const media: { url: string; type: string }[] = [];
-          // Handle main image
           if (meta?.image && meta?.image.item && meta?.image.type) {
             media.push({ url: meta.image.item, type: meta.image.type });
           }
-          // Handle attachments (images, files, etc.)
           if (Array.isArray(meta?.attachments)) {
             for (const att of meta.attachments) {
               if (att.item && att.type) {

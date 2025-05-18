@@ -3,9 +3,8 @@ import { fetchAccount, fetchFollowers, fetchFollowing } from '@lens-protocol/cli
 import { getLensClient } from '@/lib/lens/client';
 import { evmAddress } from '@lens-protocol/client';
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const lensClient = await getLensClient();
 
   const result = await fetchAccount(lensClient, {
@@ -26,8 +25,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   const [followersResult, followingResult] = await Promise.all([fetchFollowers(lensClient, { account: evmAddress(address) }), fetchFollowing(lensClient, { account: evmAddress(address) })]);
 
-  const followerCount = followersResult.isOk() ? (followersResult.value.pageInfo?.totalCount ?? followersResult.value.items.length) : 0;
-  const followingCount = followingResult.isOk() ? (followingResult.value.pageInfo?.totalCount ?? followingResult.value.items.length) : 0;
+  const followerCount = followersResult.isOk() ? followersResult.value.items.length : 0;
+  const followingCount = followingResult.isOk() ? followingResult.value.items.length : 0;
 
   return (
     <Header
