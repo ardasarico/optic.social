@@ -34,7 +34,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       handle={account.username?.localName ?? ''}
       bio={account.metadata?.bio ?? ''}
       profileImage={account.metadata?.picture ?? '/media/placeholders/profile.png'}
-      coverImage={account.metadata?.coverPicture ?? undefined}
+      evmAddress={account.address ?? ''}
       followerCount={followerCount}
       followingCount={followingCount}
     />
