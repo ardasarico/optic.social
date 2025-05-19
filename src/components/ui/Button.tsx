@@ -32,7 +32,7 @@ const Button: React.FC<ButtonProps> = ({
   const buttonClasses = clsx(
     'flex items-center cursor-pointer gap-1.5 rounded-full text-[16px]! leading-[24px]! justify-center transition ease-out duration-200 active:scale-[0.99] hover:opacity-90',
     variant === 'primary' && 'bg-blue text-[#FFFFFF]',
-    variant === 'secondary' && 'bg-neutral-400 text-neutral-900',
+    variant === 'secondary' && 'bg-neutral-300 text-neutral-800',
     variant === 'outline' && 'border border-neutral-300 text-neutral-900 hover:opacity-100!',
     variant === 'plain' && 'text-neutral-900',
     size === 'large' && 'px-6 py-3 rounded-[16px]! gap-2 font-medium',

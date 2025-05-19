@@ -10,6 +10,7 @@ import { follow, unfollow, fetchAccount } from '@lens-protocol/client/actions';
 import { handleOperationWith } from '@lens-protocol/client/viem';
 import { useWalletClient } from 'wagmi';
 import { evmAddress as createEvmAddress } from '@lens-protocol/client';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   name: string;
@@ -26,6 +27,7 @@ const Header = ({ name, handle, bio, profileImage, followerCount = 0, followingC
   const [currentFollowerCount, setCurrentFollowerCount] = useState(followerCount);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const { data: walletClient } = useWalletClient();
+  const router = useRouter();
 
   useEffect(() => {
     setCurrentFollowerCount(followerCount);
@@ -117,9 +119,9 @@ const Header = ({ name, handle, bio, profileImage, followerCount = 0, followingC
     if (isOwnProfile) {
       return (
         <>
-          <Button size="large" fill className="bg-neutral-200 text-neutral-800 hover:bg-neutral-300">
+          <Button size="large" fill className="bg-neutral-200 text-neutral-800 hover:bg-neutral-300" onClick={() => router.push(`/${handle}/settings`)}>
             <IconPencil />
-            Edit Profile
+            Edit Details
           </Button>
           <Button size="large" fill className="bg-neutral-200 text-neutral-800 hover:bg-neutral-300">
             <IconGear />

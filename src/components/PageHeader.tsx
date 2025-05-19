@@ -19,6 +19,7 @@ const STATIC_PAGES: Record<string, string> = {
 };
 
 const getTitleForPath = (pathname: string, userHandle: string | null): string => {
+  if (pathname.includes('/settings')) return 'Settings';
   if (STATIC_PAGES[pathname]) return STATIC_PAGES[pathname];
   const cleanPath = pathname.startsWith('/') ? pathname.slice(1) : pathname;
   if (userHandle && cleanPath === userHandle) return 'Profile';
