@@ -1,4 +1,5 @@
 import Header from '@/components/profile/Header';
+import Tabs from '@/components/profile/Tabs';
 import { fetchAccount, fetchFollowers, fetchFollowing } from '@lens-protocol/client/actions';
 import { getLensClient } from '@/lib/lens/client';
 import { evmAddress } from '@lens-protocol/client';
@@ -29,14 +30,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const followingCount = followingResult.isOk() ? followingResult.value.items.length : 0;
 
   return (
-    <Header
-      name={account.metadata?.name ?? ''}
-      handle={account.username?.localName ?? ''}
-      bio={account.metadata?.bio ?? ''}
-      profileImage={account.metadata?.picture ?? '/media/placeholders/profile.png'}
-      evmAddress={account.address ?? ''}
-      followerCount={followerCount}
-      followingCount={followingCount}
-    />
+    <>
+      <Header
+        name={account.metadata?.name ?? ''}
+        handle={account.username?.localName ?? ''}
+        bio={account.metadata?.bio ?? ''}
+        profileImage={account.metadata?.picture ?? '/media/placeholders/profile.png'}
+        evmAddress={account.address ?? ''}
+        followerCount={followerCount}
+        followingCount={followingCount}
+      />
+      <Tabs address={address} />
+    </>
   );
 }

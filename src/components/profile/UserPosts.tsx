@@ -1,31 +1,28 @@
 'use client';
-
-import Post, { PostProps } from './post';
 import { useEffect, useState } from 'react';
 import { getLensClient } from '@/lib/lens/client';
 import { evmAddress } from '@lens-protocol/client';
 import { fetchPosts } from '@lens-protocol/client/actions';
+import Post, { PostProps } from '@/components/Feed/post';
 import PostSkeleton from '@/components/ui/PostSkeleton';
 
-const FEED_APP_ADDRESS = '0x59d5e65777914d474E26d7416894752c6849516d';
+interface UserPostsProps {
+  address: string;
+}
 
-const Feed = () => {
+const UserPosts = ({ address }: UserPostsProps) => {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function fetchData() {
+  async function fetchUserPosts() {
     setLoading(true);
 
     try {
       const client = await getLensClient();
       const result = await fetchPosts(client, {
         filter: {
-          feeds: [
-            {
-              app: evmAddress(FEED_APP_ADDRESS),
-            },
-          ],
+          authors: [evmAddress(address)],
         },
       });
 
@@ -44,8 +41,8 @@ const Feed = () => {
   }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchUserPosts();
+  }, [address]);
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -95,4 +92,4 @@ const Feed = () => {
   );
 };
 
-export default Feed;
+export default UserPosts;

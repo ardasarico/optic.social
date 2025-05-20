@@ -145,7 +145,7 @@ const Header = ({ name, handle, bio, profileImage, followerCount = 0, followingC
   };
 
   return (
-    <div className="mt-8 flex w-full flex-col items-center justify-center gap-6">
+    <div className="mt-8 flex w-full flex-col items-center justify-center gap-6 pb-8">
       <img src={profileImage} alt="Profile" className="aspect-square w-[112px] overflow-hidden rounded-full bg-neutral-300 object-cover" />
       <div className="flex flex-col items-center gap-2 text-center">
         <p className="text-[28px] leading-[32px] font-semibold">{name}</p>
