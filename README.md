@@ -1,20 +1,19 @@
 ![Optic.social Banner](/github-banner.png)
 
-## Optic.social
+# Optic — subscription-first SocialFi on Lens
 
-A decentralized social platform for creators and fans! Built on Lens Protocol for the Lens Spring Hackathon.
+Optic makes it easy to build community with your biggest fans, share exclusive content and earn through on-chain memberships — all built on Lens for the Spring Hackathon.
 
-## Key Features
+## Features
+- **⭐ Subscription feeds** — Creators can publish premium, paywalled content.
+  
+- **🌿 Built on Lens Protocol** — All interactions are native Lens social primitives.
+  
+- **🔑 Easy to use** — Smooth onboarding powered by ConnectKit and Family.
+  
+- **🎨 Beautiful by design** — Modern user interface crafted to delight.
 
-- **Decentralized Social Networking**: Built on Lens Protocol, ensuring user data ownership and privacy. Fast and safe!
-
-- **Easy to use**: Seamless web3 experience with connectkit
-
-- **Creator-Centric**: Optimized platform for content creators and their fans
-
-- **Modern UI/UX**: Carefully designed interface down to the finest details
-
-- **Secure Storage**: Integrated with Grove for decentralized content management
+- **📦 Secure storage** — All your posts and metadata secured in Grove.
 
 ## Prerequisites
 
@@ -22,7 +21,7 @@ A decentralized social platform for creators and fans! Built on Lens Protocol fo
 - Yarn package manager
 - A crypto wallet (e.g., Family)
 
-## Installation
+## Quick Start
 
 1. Clone the repository
 
@@ -57,6 +56,6 @@ NEXT_PUBLIC_APP_ADDRESS=xxxxx
 
 ## Team
 
-- **Arda Sarı** - Developer [@ardasarico](https://x.com/ardasarico)
+- **Arda Sari** — Developer [@ardasarico](https://x.com/ardasarico)
 
-- **Emirhan Uğurlu** - Designer [@eugurlu](https://x.com/_eugrl)
+- **Emirhan Ugurlu** — Designer [@eugrl](https://x.com/_eugrl)
