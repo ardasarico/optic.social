@@ -12,7 +12,7 @@ const Sidebar = () => {
       <div className={'mt-auto flex items-center gap-2 text-[13px] leading-[16px] text-neutral-600'}>
         <p>© 2025 Optic</p>
         <p className={'text-neutral-500'}>·</p>
-        <Link href="https://github.com/" target={'_blank'} className={'transition duration-200 ease-out hover:text-neutral-800'}>
+        <Link href="https://github.com/ardasarico/optic.social" target={'_blank'} className={'transition duration-200 ease-out hover:text-neutral-800'}>
           GitHub
         </Link>
       </div>

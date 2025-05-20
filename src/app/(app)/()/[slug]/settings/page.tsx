@@ -16,8 +16,8 @@ import IconCoins from '@icon/coins.svg';
 
 import Button from '@/components/ui/Button';
 
-export default function SettingsPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const { disconnect } = useDisconnect();
   const router = useRouter();
   const [account, setAccount] = useState<any>(null);

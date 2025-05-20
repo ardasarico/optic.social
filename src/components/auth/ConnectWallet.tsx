@@ -34,7 +34,7 @@ const ConnectWallet = () => {
       <div className={'absolute bottom-6 flex items-center gap-2 text-[13px] leading-[16px] text-neutral-600'}>
         <p>© 2025 Optic</p>
         <p className={'font-bold text-neutral-500'}>·</p>
-        <Link href="https://github.com/" target={'_blank'} className={'transition duration-200 ease-out hover:text-neutral-700'}>
+        <Link href="https://github.com/ardasarico/optic.social" target={'_blank'} className={'transition duration-200 ease-out hover:text-neutral-700'}>
           GitHub
         </Link>
       </div>

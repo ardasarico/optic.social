@@ -13,13 +13,17 @@ const Start = () => {
     router.push(`/`);
     window.location.reload();
   };
+  const handleBecomeaCreator = async () => {
+    router.push(`/becomeacreator`);
+    window.location.reload();
+  };
 
   return (
     <div className={'flex flex-col gap-6'}>
       <StepHeader icon={<IconPerson />} title="Let's get you started" description="How would you like to start? You can always become a creator later." />
       <div className="flex items-stretch gap-5">
         <div
-          onClick={() => router.push('/becomecreator')}
+          onClick={handleBecomeaCreator}
           className="flex w-[288px] cursor-pointer flex-col gap-5 rounded-[24px] bg-neutral-200 p-5 pr-3 transition duration-200 ease-out hover:bg-neutral-300 active:scale-[0.99]">
           <div className="bg-purple flex aspect-square w-[56px] items-center justify-center rounded-full text-[32px] text-neutral-100">
             <IconStar />

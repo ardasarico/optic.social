@@ -23,6 +23,11 @@ const UserPosts = ({ address }: UserPostsProps) => {
       const result = await fetchPosts(client, {
         filter: {
           authors: [evmAddress(address)],
+          feeds: [
+            {
+              feed: evmAddress('0x469CB8F8A424fc9E1781FB2633822102134191d1'),
+            },
+          ],
         },
       });
 

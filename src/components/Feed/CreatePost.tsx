@@ -6,8 +6,8 @@ import { fetchAccount } from '@lens-protocol/client/actions';
 import type { Account } from '@lens-protocol/client';
 import { evmAddress, uri } from '@lens-protocol/client';
 import { post as lensPost } from '@lens-protocol/client/actions';
-import { textOnly, image, MediaImageMimeType, MetadataLicenseType } from '@lens-protocol/metadata';
-import { StorageClient } from '@lens-chain/storage-client';
+import { textOnly, image, MediaImageMimeType, MetadataLicenseType, MetadataAttributeType, MetadataAttribute } from '@lens-protocol/metadata';
+import { StorageClient, immutable } from '@lens-chain/storage-client';
 
 import IconPhoto from '@icon/photo.svg';
 import IconAttachment from '@icon/attachment.svg';
@@ -17,12 +17,14 @@ import IconXmark from '@icon/xmark.svg';
 import Button from '../ui/Button';
 
 const FEED_ADDRESS = '0x469CB8F8A424fc9E1781FB2633822102134191d1';
+const CREATORS_FEED_ADDRESS = '0xdd48E53Db6E53682C2f9b01d29460462e84a9354';
 
 const CreatePost = () => {
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState<Account | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<{ id: string; file: File; type: 'image' | 'file' }[]>([]);
   const [previewUrls, setPreviewUrls] = useState<{ id: string; url: string }[]>([]);
 
@@ -41,6 +43,10 @@ const CreatePost = () => {
 
         const acc = await fetchAccount(client, { address: authenticatedUser.address }).unwrapOr(null);
         setAuthor(acc);
+
+        // Check if user is creator
+        const creatorStatus = acc?.metadata?.attributes?.find((attr) => attr.key === 'isCreator')?.value === 'true';
+        setIsCreator(creatorStatus || false);
       } catch (error) {
         console.error('Failed to load account:', error);
       } finally {
@@ -87,12 +93,22 @@ const CreatePost = () => {
       const client = await getLensClient();
       if (!client.isSessionClient()) return;
       const storageClient = StorageClient.create();
+
+      // Check if user is creator
+      const authenticatedUser = client.getAuthenticatedUser().unwrapOr(null);
+      if (!authenticatedUser) return;
+
+      const account = await fetchAccount(client, { address: authenticatedUser.address }).unwrapOr(null);
+      const isCreator = account?.metadata?.attributes?.find((attr) => attr.key === 'isCreator')?.value === 'true';
+
       // Upload images and files, collect their URIs
       const imageMetas = [];
       const fileMetas = [];
+      const acl = immutable(37111); // Using the chain ID for Lens Protocol
+
       for (const fileObj of uploadedFiles) {
         const { file, type } = fileObj;
-        const upload = await storageClient.uploadFile(file);
+        const upload = await storageClient.uploadFile(file, { acl });
         if (type === 'image') {
           // Detect mime type for image
           let mimeType: MediaImageMimeType = MediaImageMimeType.PNG;
@@ -120,7 +136,7 @@ const CreatePost = () => {
           });
         }
       }
-      // Metadata oluştur
+      // Create metadata
       let metadata;
       if (imageMetas.length > 0 || fileMetas.length > 0) {
         metadata = image({
@@ -128,21 +144,43 @@ const CreatePost = () => {
           image: imageMetas[0] || undefined,
           attachments: fileMetas.length > 0 ? (fileMetas as any) : undefined,
           content,
+          attributes: [
+            {
+              key: 'isPrivate',
+              type: MetadataAttributeType.BOOLEAN,
+              value: isPrivate ? 'true' : 'false',
+            },
+          ],
         });
       } else {
-        metadata = textOnly({ content });
+        metadata = textOnly({
+          content,
+          attributes: [
+            {
+              key: 'isPrivate',
+              type: MetadataAttributeType.BOOLEAN,
+              value: isPrivate ? 'true' : 'false',
+            },
+          ],
+        });
       }
-      // Metadata'yı Grove'a yükle
-      const { uri: contentUri } = await storageClient.uploadFile(new File([JSON.stringify(metadata)], 'metadata.json', { type: 'application/json' }));
-      // Postu gönder
+
+      // Upload metadata to Grove
+      const { uri: contentUri } = await storageClient.uploadFile(new File([JSON.stringify(metadata)], 'metadata.json', { type: 'application/json' }), { acl });
+
+      // Send post to appropriate feed
+      const feedAddress = isPrivate && isCreator ? CREATORS_FEED_ADDRESS : FEED_ADDRESS;
+
       const result = await lensPost(client, {
         contentUri: uri(contentUri),
-        feed: evmAddress(FEED_ADDRESS),
+        feed: evmAddress(feedAddress),
       });
+
       if (result.isErr()) {
         alert(result.error.message || 'Error posting');
         return;
       }
+
       setContent('');
       setUploadedFiles([]);
       setPreviewUrls([]);
@@ -219,20 +257,22 @@ const CreatePost = () => {
             className="cursor-pointer items-center gap-1 p-0.5 text-[20px] transition duration-200 ease-out hover:text-neutral-700 active:scale-[96%]">
             <IconAttachment />
           </button>
-          <button
-            className={`ml-auto flex h-full cursor-pointer items-center gap-1 rounded text-[16px] leading-[24px] transition duration-200 ease-out hover:bg-neutral-100 active:scale-[98%] ${isPrivate ? 'text-blue' : 'text-purple'}`}
-            onClick={() => setIsPrivate(!isPrivate)}>
-            {isPrivate ? (
-              <>
-                <IconGlobe /> Public
-              </>
-            ) : (
-              <>
-                <IconStar /> Subscribers
-              </>
-            )}
-          </button>
-          <Button size="small" className={`${content ? 'bg-neutral-800' : 'pointer-events-none! cursor-not-allowed! bg-neutral-300'}`} onClick={handleSubmit}>
+          {isCreator && (
+            <button
+              className={`ml-auto flex h-full cursor-pointer items-center gap-1 rounded text-[16px] leading-[24px] transition duration-200 ease-out hover:bg-neutral-100 active:scale-[98%] ${isPrivate ? 'text-purple' : 'text-blue'}`}
+              onClick={() => setIsPrivate(!isPrivate)}>
+              {isPrivate ? (
+                <>
+                  <IconStar /> Subscribers
+                </>
+              ) : (
+                <>
+                  <IconGlobe /> Public
+                </>
+              )}
+            </button>
+          )}
+          <Button size="small" className={`${content ? 'bg-neutral-800' : 'pointer-events-none! cursor-not-allowed! bg-neutral-300'} ${!isCreator && 'ml-auto'}`} onClick={handleSubmit}>
             Post
           </Button>
         </div>
