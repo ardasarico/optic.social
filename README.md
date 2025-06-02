@@ -30,13 +30,13 @@ git clone https://github.com/ardasarico/optic.social.git
 cd optic.social
 ```
 
-3. Install dependencies
+2. Install dependencies
 
 ```bash
 yarn install
 ```
 
-4. Run the development server
+3. Run the development server
 
 ```bash
 yarn dev
